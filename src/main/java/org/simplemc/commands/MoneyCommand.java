@@ -30,7 +30,7 @@ public class MoneyCommand implements CommandExecutor
             if (args[0].equalsIgnoreCase("get"))
             {
                 Account account = economy.getAccount(((Player) commandSender).getUniqueId());
-                commandSender.sendMessage(account.toString());
+                commandSender.sendMessage(economy.formatPhrase("balance.get", account.getBalance()));
             }
             else if (args[0].equalsIgnoreCase("set"))
             {
@@ -40,7 +40,7 @@ public class MoneyCommand implements CommandExecutor
                     Account account = economy.getAccount(((Player) commandSender).getUniqueId());
                     account.setBalance(amount);
                     account.save();
-                    commandSender.sendMessage(account.toString());
+                    commandSender.sendMessage(economy.formatPhrase("balance.set.self", account.getBalance()));
                 }
                 else if (args.length == 3)
                 {
@@ -52,9 +52,9 @@ public class MoneyCommand implements CommandExecutor
                         Account account = economy.getAccount(uuid);
                         account.setBalance(amount);
                         account.save();
-                        commandSender.sendMessage(account.toString());
+                        commandSender.sendMessage(economy.formatPhrase("balance.set.other", offlinePlayer.get().getName(), account.getBalance()));
                     } else {
-                        commandSender.sendMessage("Could not find player by the name of " + args[1]);
+                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
                     }
                 }
             }
@@ -70,9 +70,9 @@ public class MoneyCommand implements CommandExecutor
                         Account account = economy.getAccount(uuid);
                         account.setBalance(account.getBalance() + amount);
                         account.save();
-                        commandSender.sendMessage(account.toString());
+                        commandSender.sendMessage(economy.formatPhrase("balance.give", amount, offlinePlayer.get().getName()));
                     } else {
-                        commandSender.sendMessage("Could not find player by the name of " + args[1]);
+                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
                     }
                 }
             }
@@ -88,9 +88,9 @@ public class MoneyCommand implements CommandExecutor
                         Account account = economy.getAccount(uuid);
                         account.setBalance(account.getBalance() - amount);
                         account.save();
-                        commandSender.sendMessage(account.toString());
+                        commandSender.sendMessage(economy.formatPhrase("balance.take", amount, offlinePlayer.get().getName()));
                     } else {
-                        commandSender.sendMessage("Could not find player by the name of " + args[1]);
+                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
                     }
                 }
             }
@@ -108,12 +108,7 @@ public class MoneyCommand implements CommandExecutor
             }
             else if (args[0].equalsIgnoreCase("help"))
             {
-                commandSender.sendMessage(
-                        "--- Money ---\n"
-                        + "/money get - Gets your current balance\n"
-                        + "/money send - Sends money to another player\n"
-                        + "/money top - Lists top balances\n"
-                );
+                commandSender.sendMessage(economy.formatPhrase("help"));
             }
             else
             {

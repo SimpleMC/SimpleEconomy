@@ -1,0 +1,16 @@
+phrases:
+  balance:
+    get: "[Money]: Your balance is %s."
+    set:
+      self: "[Money]: Your balance has been set to %f."
+      other: "[Money]: You have set %s's balance to %f."
+    give: "[Money]: You gave %f to %s."
+    take: "[Money]: You took %f away from %s."
+  error:
+    player:
+      notfound: "[Money]: Sorry we could not find a player by the name of %s."
+  help: |
+          --- Money ---
+          /money get - Gets your current balance
+          /money send - Sends money to another player
+          /money top - Lists top balances
