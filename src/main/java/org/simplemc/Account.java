@@ -46,7 +46,7 @@ public class Account
      */
     public boolean save()
     {
-        throw new NotImplementedException("save not implemented.");
+        return simpleEconomy.getDatabaseManager().saveAccount(this);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.simplemc.database;
 
+import org.simplemc.Account;
 import org.simplemc.SimpleEconomy;
 
 import java.sql.*;
@@ -52,7 +53,9 @@ public class DatabaseManager
         PreparedStatement preparedStatement = null;
         try
         {
-            preparedStatement = connection.prepareStatement(String.format("SELECT * FROM %s.accounts WHERE uuid = ?", simpleEconomy.getConfig().getString("db.database")));
+            preparedStatement = connection.prepareStatement(
+                    String.format("SELECT * FROM %s.accounts WHERE uuid = ?",
+                            simpleEconomy.getConfig().getString("db.database")));
             preparedStatement.setString(1, uuid.toString());
             return preparedStatement.executeQuery();
         }
@@ -61,6 +64,26 @@ public class DatabaseManager
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean saveAccount(Account account)
+    {
+        PreparedStatement preparedStatement = null;
+        try
+        {
+            preparedStatement = connection.prepareStatement(
+                    String.format("UPDATE %s.accounts SET balance=? WHERE id = ?",
+                            simpleEconomy.getConfig().getString("db.database")));
+            preparedStatement.setDouble(1, account.getBalance());
+            preparedStatement.setInt(2, account.getId());
+            preparedStatement.execute();
+            return true;
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
