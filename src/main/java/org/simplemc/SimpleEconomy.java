@@ -1,17 +1,18 @@
 package org.simplemc;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simplemc.commands.MoneyCommand;
 import org.simplemc.database.DatabaseManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class SimpleEconomy extends JavaPlugin
 {
     private DatabaseManager databaseManager;
+    HashMap<UUID, Account> accounts = new HashMap<>();
 
     @Override
     public void onEnable()
@@ -22,6 +23,13 @@ public class SimpleEconomy extends JavaPlugin
         getCommand("money").setExecutor(new MoneyCommand(this));
         getServer().getPluginManager().registerEvents(new PlayerLoginListener(this), this);
         getLogger().info(getName() + " has finished loading!");
+    }
+
+    @Override
+    public void onDisable()
+    {
+        accounts.values().forEach(Account::save);
+        accounts.clear();
     }
 
     public DatabaseManager getDatabaseManager()
@@ -37,6 +45,11 @@ public class SimpleEconomy extends JavaPlugin
      */
     public Account getAccount(UUID uuid)
     {
+        if (accounts.containsKey(uuid))
+        {
+            return accounts.get(uuid);
+        }
+
         ResultSet resultSet = getDatabaseManager().selectAccount(uuid);
         try
         {
@@ -45,7 +58,9 @@ public class SimpleEconomy extends JavaPlugin
                 int resultId = resultSet.getInt("id");
                 String resultUUID = resultSet.getString("uuid");
                 double resultBalance = resultSet.getDouble("balance");
-                return new Account(resultId, UUID.fromString(resultUUID), resultBalance, this);
+                Account account = new Account(resultId, UUID.fromString(resultUUID), resultBalance, this);
+                accounts.put(UUID.fromString(resultUUID), account);
+                return account;
             }
 
         }
@@ -66,9 +81,14 @@ public class SimpleEconomy extends JavaPlugin
     public Account createAccount(UUID uuid, double balance)
     {
         int accountId = getDatabaseManager().createAccount(uuid, balance);
-        if (accountId != -1) {
-            return new Account(accountId, uuid, balance, this);
-        } else {
+        if (accountId != -1)
+        {
+            Account account = new Account(accountId, uuid, balance, this);
+            accounts.put(uuid, account);
+            return account;
+        }
+        else
+        {
             throw new RuntimeException("Failure to create account.");
         }
     }

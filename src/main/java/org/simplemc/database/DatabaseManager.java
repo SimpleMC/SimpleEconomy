@@ -78,7 +78,7 @@ public class DatabaseManager
         try
         {
             preparedStatement = connection.prepareStatement(
-                    String.format("SELECT * FROM %s.accounts WHERE uuid = ?",
+                    String.format("SELECT * FROM %s.accounts WHERE uuid = ?;",
                             simpleEconomy.getConfig().getString("db.database")));
             preparedStatement.setString(1, uuid.toString());
             return preparedStatement.executeQuery();
@@ -96,7 +96,7 @@ public class DatabaseManager
         try
         {
             preparedStatement = connection.prepareStatement(
-                    String.format("UPDATE %s.accounts SET balance=? WHERE id = ?",
+                    String.format("UPDATE %s.accounts SET balance=? WHERE id = ?;",
                             simpleEconomy.getConfig().getString("db.database")));
             preparedStatement.setDouble(1, account.getBalance());
             preparedStatement.setInt(2, account.getId());
@@ -116,7 +116,7 @@ public class DatabaseManager
         try
         {
             preparedStatement = connection.prepareStatement(
-                    String.format("INSERT IGNORE INTO %s.accounts (id, uuid, balance) VALUES (NULL, ?, ?);",
+                    String.format("INSERT INTO %s.accounts (id, uuid, balance) VALUES (NULL, ?, ?);",
                             simpleEconomy.getConfig().getString("db.database")), Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, uuid.toString());
             preparedStatement.setDouble(2, startingBalance);

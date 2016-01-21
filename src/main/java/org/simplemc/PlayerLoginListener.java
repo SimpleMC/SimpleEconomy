@@ -16,6 +16,6 @@ public class PlayerLoginListener implements Listener
     @EventHandler
     public void onLoginEvent(PlayerLoginEvent event)
     {
-        economy.createAccount(event.getPlayer().getUniqueId(), economy.getConfig().getInt("defaults.balance"));
+        economy.getAccount(event.getPlayer().getUniqueId());
     }
 }
