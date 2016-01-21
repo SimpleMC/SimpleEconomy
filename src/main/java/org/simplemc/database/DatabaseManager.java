@@ -16,7 +16,8 @@ public class DatabaseManager
         setupDatabase();
     }
 
-    private void setupDatabase() {
+    private void setupDatabase()
+    {
         try
         {
             Class.forName("com.mysql.jdbc.Driver");
@@ -43,7 +44,8 @@ public class DatabaseManager
         }
     }
 
-    public ResultSet selectAccount(UUID uuid) {
+    public ResultSet selectAccount(UUID uuid)
+    {
         PreparedStatement preparedStatement = null;
         try
         {

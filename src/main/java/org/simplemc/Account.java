@@ -1,4 +1,4 @@
-package org.simplemc.api;
+package org.simplemc;
 
 import org.apache.commons.lang.NotImplementedException;
 
