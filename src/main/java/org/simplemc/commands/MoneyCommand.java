@@ -35,7 +35,7 @@ public class MoneyCommand implements CommandExecutor
             {
                 if (args.length == 2)
                 {
-                    int amount = Integer.parseInt(args[1]);
+                    double amount = Double.parseDouble(args[1]);
                     Account account = economy.getAccount(((Player) commandSender).getUniqueId());
                     account.setBalance(amount);
                     account.save();
@@ -47,7 +47,7 @@ public class MoneyCommand implements CommandExecutor
                     Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
                     if (offlinePlayer.isPresent()) {
                         UUID uuid = offlinePlayer.get().getUniqueId();
-                        int amount = Integer.parseInt(args[2]);
+                        double amount = Double.parseDouble(args[2]);
                         Account account = economy.getAccount(uuid);
                         account.setBalance(amount);
                         account.save();
@@ -65,7 +65,7 @@ public class MoneyCommand implements CommandExecutor
                     Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
                     if (offlinePlayer.isPresent()) {
                         UUID uuid = offlinePlayer.get().getUniqueId();
-                        int amount = Integer.parseInt(args[2]);
+                        double amount = Double.parseDouble(args[2]);
                         Account account = economy.getAccount(uuid);
                         account.setBalance(account.getBalance() + amount);
                         account.save();
@@ -83,7 +83,7 @@ public class MoneyCommand implements CommandExecutor
                     Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
                     if (offlinePlayer.isPresent()) {
                         UUID uuid = offlinePlayer.get().getUniqueId();
-                        int amount = Integer.parseInt(args[2]);
+                        double amount = Double.parseDouble(args[2]);
                         Account account = economy.getAccount(uuid);
                         account.setBalance(account.getBalance() - amount);
                         account.save();
