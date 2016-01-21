@@ -7,6 +7,7 @@ import org.simplemc.SimpleEconomy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class DatabaseManager
@@ -132,6 +133,28 @@ public class DatabaseManager
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public HashMap<UUID, Double> getTop(int limit) {
+        PreparedStatement preparedStatement = null;
+        try
+        {
+            HashMap<UUID, Double> topMap = new HashMap<>();
+            preparedStatement = connection.prepareStatement(
+                    String.format("SELECT uuid, balance FROM %s.accounts ORDER BY balance DESC LIMIT ?;",
+                            simpleEconomy.getConfig().getString("db.database")));
+            preparedStatement.setInt(1, limit);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                topMap.put(UUID.fromString(resultSet.getString("uuid")), resultSet.getDouble("balance"));
+            }
+            return topMap;
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return new HashMap<>();
     }
 
 

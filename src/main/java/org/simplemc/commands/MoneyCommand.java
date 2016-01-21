@@ -9,6 +9,7 @@ import org.simplemc.SimpleEconomy;
 import org.simplemc.Account;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -99,11 +100,20 @@ public class MoneyCommand implements CommandExecutor
             }
             else if (args[0].equalsIgnoreCase("top"))
             {
-                commandSender.sendMessage("Not implemented");
+                HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
+                top.entrySet().stream().map(x -> {
+                    String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
+                    return String.format("%s - %f", name, x.getValue());
+                }).forEach(commandSender::sendMessage);
             }
             else if (args[0].equalsIgnoreCase("help"))
             {
-                commandSender.sendMessage("Not implemented");
+                commandSender.sendMessage(
+                        "--- Money ---\n"
+                        + "/money get - Gets your current balance\n"
+                        + "/money send - Sends money to another player\n"
+                        + "/money top - Lists top balances\n"
+                );
             }
             else
             {
