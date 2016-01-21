@@ -93,6 +93,10 @@ public class MoneyCommand implements CommandExecutor
                     }
                 }
             }
+            else if (args[0].equalsIgnoreCase("send"))
+            {
+                commandSender.sendMessage("Not implemented");
+            }
             else if (args[0].equalsIgnoreCase("top"))
             {
                 commandSender.sendMessage("Not implemented");
