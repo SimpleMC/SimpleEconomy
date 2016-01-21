@@ -1,0 +1,1 @@
+INSERT INTO simpleeconomy.accounts (id, uuid, balance) VALUES (1, '13db1d08-e3a8-48be-bbc5-098b0d3eaa9a', 100);

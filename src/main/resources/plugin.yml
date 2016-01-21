@@ -1,0 +1,10 @@
+author: SimpleMC.org
+main: org.simplemc.SimpleEconomy
+name: SimpleEconomy
+url: http://simplemc.org
+version: '1.0-SNAPSHOT'
+commands:
+   money:
+      description: Kills your dog and eats your homework.
+      permission: simple.economy.money
+      permission-message: You dont have permission to use this command!
