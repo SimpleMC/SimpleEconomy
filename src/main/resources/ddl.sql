@@ -1,4 +1,4 @@
-CREATE TABLE `accounts` (
+CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uuid` varchar(36) NOT NULL,
   `balance` double DEFAULT NULL,

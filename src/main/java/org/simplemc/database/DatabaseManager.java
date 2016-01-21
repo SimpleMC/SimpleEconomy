@@ -1,8 +1,11 @@
 package org.simplemc.database;
 
+import org.apache.commons.io.IOUtils;
 import org.simplemc.Account;
 import org.simplemc.SimpleEconomy;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.UUID;
 
@@ -39,6 +42,27 @@ public class DatabaseManager
                             simpleEconomy.getConfig().getString("db.username"),
                             simpleEconomy.getConfig().getString("db.password")
                     ));
+            InputStream input = getClass().getResourceAsStream("/ddl.sql");
+            try
+            {
+                String s = IOUtils.toString(input);
+                connection.createStatement().execute(s);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                try
+                {
+                    input.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
         catch (SQLException e)
         {
