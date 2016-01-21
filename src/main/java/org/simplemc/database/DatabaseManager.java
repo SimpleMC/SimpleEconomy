@@ -116,7 +116,7 @@ public class DatabaseManager
         try
         {
             preparedStatement = connection.prepareStatement(
-                    String.format("INSERT INTO %s.accounts (id, uuid, balance) VALUES (NULL, ?, ?);",
+                    String.format("INSERT IGNORE INTO %s.accounts (id, uuid, balance) VALUES (NULL, ?, ?);",
                             simpleEconomy.getConfig().getString("db.database")), Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, uuid.toString());
             preparedStatement.setDouble(2, startingBalance);

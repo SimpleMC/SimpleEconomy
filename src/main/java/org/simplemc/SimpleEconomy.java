@@ -18,8 +18,9 @@ public class SimpleEconomy extends JavaPlugin
     {
         getLogger().info(getName() + " is loading...");
         saveDefaultConfig();
-        getCommand("money").setExecutor(new MoneyCommand(this));
         databaseManager = new DatabaseManager(this);
+        getCommand("money").setExecutor(new MoneyCommand(this));
+        getServer().getPluginManager().registerEvents(new PlayerLoginListener(this), this);
         getLogger().info(getName() + " has finished loading!");
     }
 
