@@ -52,7 +52,7 @@ public class DatabaseManager
         PreparedStatement preparedStatement = null;
         try
         {
-            preparedStatement = connection.prepareStatement("SELECT * FROM simpleeconomy.accounts WHERE uuid = ?");
+            preparedStatement = connection.prepareStatement(String.format("SELECT * FROM %s.accounts WHERE uuid = ?", simpleEconomy.getConfig().getString("db.database")));
             preparedStatement.setString(1, uuid.toString());
             return preparedStatement.executeQuery();
         }
