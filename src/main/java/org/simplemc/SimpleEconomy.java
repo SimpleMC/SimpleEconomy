@@ -43,27 +43,14 @@ public class SimpleEconomy extends JavaPlugin
                 int resultId = resultSet.getInt("id");
                 String resultUUID = resultSet.getString("uuid");
                 double resultBalance = resultSet.getDouble("balance");
-                return new Account(resultId, UUID.fromString(resultUUID), resultBalance);
-            } else
-            {
-                return createAccount(uuid, 100); //TODO: Grab this value from config
+                return new Account(resultId, UUID.fromString(resultUUID), resultBalance, this);
             }
+
         } catch (SQLException e)
         {
             e.printStackTrace();
         }
-        return null;
-    }
-
-    /**
-     * Saves an account to the database.
-     *
-     * @param account The account to save
-     * @return true if save succeed.
-     */
-    public boolean saveAccount(Account account)
-    {
-        throw new NotImplementedException("saveAccount not implemented.");
+        return createAccount(uuid, 100); //TODO: Grab this value from config
     }
 
     /**

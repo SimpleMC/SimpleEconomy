@@ -9,12 +9,14 @@ public class Account
     private final int id;
     private final UUID uuid;
     private double balance;
+    private final SimpleEconomy simpleEconomy;
 
-    public Account(int id, UUID uuid, double balance)
+    public Account(int id, UUID uuid, double balance, SimpleEconomy simpleEconomy)
     {
         this.id = id;
         this.uuid = uuid;
         this.balance = balance;
+        this.simpleEconomy = simpleEconomy;
     }
 
     public int getId()
@@ -37,6 +39,10 @@ public class Account
         this.balance = balance;
     }
 
+    /**
+     * Saves the account to the database.
+     * @return true if the save was successful
+     */
     public boolean save()
     {
         throw new NotImplementedException("save not implemented.");
