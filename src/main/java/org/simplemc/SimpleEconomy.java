@@ -17,6 +17,7 @@ public class SimpleEconomy extends JavaPlugin
     public void onEnable()
     {
         getLogger().info(getName() + " is loading...");
+        saveDefaultConfig();
         getCommand("money").setExecutor(new MoneyCommand(this));
         databaseManager = new DatabaseManager(this);
         getLogger().info(getName() + " has finished loading!");
@@ -51,7 +52,7 @@ public class SimpleEconomy extends JavaPlugin
         {
             e.printStackTrace();
         }
-        return createAccount(uuid, 100); //TODO: Grab this value from config
+        return createAccount(uuid, getConfig().getInt("defaults.balance"));
     }
 
     /**

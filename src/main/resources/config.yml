@@ -1,0 +1,7 @@
+db:
+  host: 'localhost'
+  database: 'simpleeconomy'
+  username: 'user'
+  password: 'password'
+defaults:
+  balance: 100

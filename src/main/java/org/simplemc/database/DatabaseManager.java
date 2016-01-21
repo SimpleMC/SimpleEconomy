@@ -32,11 +32,12 @@ public class DatabaseManager
         try
         {
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost/simpleeconomy?" //TODO: manage this from config.
-                            + "user=root");
-//            connection = DriverManager
-//                    .getConnection("jdbc:mysql://localhost/feedback?"
-//                            + "user=root&password=password");
+                    .getConnection(String.format("jdbc:mysql://%s/%s?user=%s&password=%s",
+                            simpleEconomy.getConfig().getString("db.host"),
+                            simpleEconomy.getConfig().getString("db.database"),
+                            simpleEconomy.getConfig().getString("db.username"),
+                            simpleEconomy.getConfig().getString("db.password")
+                    ));
         }
         catch (SQLException e)
         {
