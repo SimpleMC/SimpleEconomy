@@ -25,22 +25,28 @@ public class MoneyCommand implements CommandExecutor
             {
                 Account account = economy.getAccount(((Player) commandSender).getUniqueId());
                 commandSender.sendMessage(account.toString());
-            } else if (args[0].equalsIgnoreCase("set"))
+            }
+            else if (args[0].equalsIgnoreCase("set"))
             {
                 commandSender.sendMessage("Not implemented");
-            } else if (args[0].equalsIgnoreCase("give"))
+            }
+            else if (args[0].equalsIgnoreCase("give"))
             {
                 commandSender.sendMessage("Not implemented");
-            } else if (args[0].equalsIgnoreCase("take"))
+            }
+            else if (args[0].equalsIgnoreCase("take"))
             {
                 commandSender.sendMessage("Not implemented");
-            } else if (args[0].equalsIgnoreCase("top"))
+            }
+            else if (args[0].equalsIgnoreCase("top"))
             {
                 commandSender.sendMessage("Not implemented");
-            } else if (args[0].equalsIgnoreCase("help"))
+            }
+            else if (args[0].equalsIgnoreCase("help"))
             {
                 commandSender.sendMessage("Not implemented");
-            } else
+            }
+            else
             {
                 return false;
             }

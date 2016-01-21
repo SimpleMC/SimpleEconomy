@@ -41,6 +41,7 @@ public class Account
 
     /**
      * Saves the account to the database.
+     *
      * @return true if the save was successful
      */
     public boolean save()

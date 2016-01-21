@@ -21,7 +21,8 @@ public class DatabaseManager
         try
         {
             Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e)
+        }
+        catch (ClassNotFoundException e)
         {
             simpleEconomy.getLogger().severe("Could not load database driver.");
             simpleEconomy.getServer().getPluginManager().disablePlugin(simpleEconomy);
@@ -36,7 +37,8 @@ public class DatabaseManager
 //            connection = DriverManager
 //                    .getConnection("jdbc:mysql://localhost/feedback?"
 //                            + "user=root&password=password");
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             simpleEconomy.getLogger().severe("Could not connect to database.");
             simpleEconomy.getServer().getPluginManager().disablePlugin(simpleEconomy);
@@ -52,7 +54,8 @@ public class DatabaseManager
             preparedStatement = connection.prepareStatement("SELECT * FROM simpleeconomy.accounts WHERE uuid = ?");
             preparedStatement.setString(1, uuid.toString());
             return preparedStatement.executeQuery();
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             e.printStackTrace();
         }

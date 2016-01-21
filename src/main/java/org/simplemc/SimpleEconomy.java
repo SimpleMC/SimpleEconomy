@@ -46,7 +46,8 @@ public class SimpleEconomy extends JavaPlugin
                 return new Account(resultId, UUID.fromString(resultUUID), resultBalance, this);
             }
 
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             e.printStackTrace();
         }
