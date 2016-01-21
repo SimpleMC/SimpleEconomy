@@ -64,6 +64,11 @@ public class SimpleEconomy extends JavaPlugin
      */
     public Account createAccount(UUID uuid, double balance)
     {
-        throw new NotImplementedException("saveAccount not implemented.");
+        int accountId = getDatabaseManager().createAccount(uuid, balance);
+        if (accountId != -1) {
+            return new Account(accountId, uuid, balance, this);
+        } else {
+            throw new RuntimeException("Failure to create account.");
+        }
     }
 }
