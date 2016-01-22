@@ -19,21 +19,42 @@ public class Account
         this.simpleEconomy = simpleEconomy;
     }
 
+    /**
+     * Gets the database ID for the player.
+     * Note: This is mainly for internal use. You should not need this if you are just hooking into this plugin.
+     *
+     * @return The database ID as an int.
+     */
     public int getId()
     {
         return id;
     }
 
+    /**
+     * Gets the UUID attached to the account.
+     *
+     * @return UUID of the player for this account.
+     */
     public UUID getUuid()
     {
         return uuid;
     }
 
+    /**
+     * Gets the balance for this account.
+     *
+     * @return The balance of the account as a double.
+     */
     public double getBalance()
     {
         return balance;
     }
 
+    /**
+     * Sets the balance of the account.
+     *
+     * @param balance The new balance for the account.
+     */
     public void setBalance(double balance)
     {
         this.balance = balance;

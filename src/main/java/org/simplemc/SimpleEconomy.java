@@ -7,17 +7,12 @@ import org.simplemc.commands.MoneyCommand;
 import org.simplemc.database.DatabaseManager;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.jar.JarFile;
 
 public class SimpleEconomy extends JavaPlugin
 {
@@ -56,6 +51,11 @@ public class SimpleEconomy extends JavaPlugin
         accounts.clear();
     }
 
+    /**
+     * Gets the DatabaseManager for this instance.
+     *
+     * @return The DatabaseManager for this instance.
+     */
     public DatabaseManager getDatabaseManager()
     {
         return databaseManager;
@@ -117,6 +117,12 @@ public class SimpleEconomy extends JavaPlugin
         }
     }
 
+    /**
+     * Wrapper to format a given string from the YamlConfiguration for language.
+     * @param phraseId The ID for the phrase minus the root name.
+     * @param objects Objects to be added by the formatter.
+     * @return The formatted string.
+     */
     public String formatPhrase(String phraseId, Object... objects)
     {
         return String.format(languageConfig.getString("phrases." + phraseId), objects);
