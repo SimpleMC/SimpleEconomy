@@ -116,6 +116,8 @@ public class MoneyCommand implements CommandExecutor
             }
             return true;
         }
-        return false;
+        Account account = economy.getAccount(((Player) commandSender).getUniqueId());
+        commandSender.sendMessage(economy.formatPhrase("balance.get", account.getBalance()));
+        return true;
     }
 }
