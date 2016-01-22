@@ -1,12 +1,20 @@
 phrases:
   balance:
-    get: "[Money]: Your balance is %s."
+    get:
+      self: "[Money]: Your balance is %f."
+      other: "[Money]: %s's balance is %f."
     set:
       self: "[Money]: Your balance has been set to %f."
       other: "[Money]: You have set %s's balance to %f."
     give: "[Money]: You gave %f to %s."
     take: "[Money]: You took %f away from %s."
+    send: "[Money]: You sent %f to %s."
+    recived: "[Money]: You recived %f from %s."
   error:
+    input:
+      toolow: "[Money]: Sorry, the amount you have entered is too low."
+    balance:
+      toolow: "[Money]: Sorry, you do not have enough funds for this transaction."
     player:
       notfound: "[Money]: Sorry we could not find a player by the name of %s."
   help: |

@@ -29,74 +29,46 @@ public class MoneyCommand implements CommandExecutor
         {
             if (args[0].equalsIgnoreCase("get"))
             {
-                Account account = economy.getAccount(((Player) commandSender).getUniqueId());
-                commandSender.sendMessage(economy.formatPhrase("balance.get", account.getBalance()));
+                if (args.length == 2)
+                {
+                    return geBalance(commandSender, args[1]);
+                }
+                else
+                {
+                    return geBalance(commandSender, null);
+                }
             }
             else if (args[0].equalsIgnoreCase("set"))
             {
                 if (args.length == 2)
                 {
-                    double amount = Double.parseDouble(args[1]);
-                    Account account = economy.getAccount(((Player) commandSender).getUniqueId());
-                    account.setBalance(amount);
-                    account.save();
-                    commandSender.sendMessage(economy.formatPhrase("balance.set.self", account.getBalance()));
+                    return setBalance(commandSender, null, Double.parseDouble(args[1]));
                 }
                 else if (args.length == 3)
                 {
-                    //TODO: Find a better way to do this, I would use getOfflinePlayer but lookup by name is deprecated
-                    Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
-                    if (offlinePlayer.isPresent()) {
-                        UUID uuid = offlinePlayer.get().getUniqueId();
-                        double amount = Double.parseDouble(args[2]);
-                        Account account = economy.getAccount(uuid);
-                        account.setBalance(amount);
-                        account.save();
-                        commandSender.sendMessage(economy.formatPhrase("balance.set.other", offlinePlayer.get().getName(), account.getBalance()));
-                    } else {
-                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
-                    }
+                    return setBalance(commandSender, args[1], Double.parseDouble(args[2]));
                 }
             }
             else if (args[0].equalsIgnoreCase("give"))
             {
                 if (args.length == 3)
                 {
-                    //TODO: Find a better way to do this, I would use getOfflinePlayer but lookup by name is deprecated
-                    Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
-                    if (offlinePlayer.isPresent()) {
-                        UUID uuid = offlinePlayer.get().getUniqueId();
-                        double amount = Double.parseDouble(args[2]);
-                        Account account = economy.getAccount(uuid);
-                        account.setBalance(account.getBalance() + amount);
-                        account.save();
-                        commandSender.sendMessage(economy.formatPhrase("balance.give", amount, offlinePlayer.get().getName()));
-                    } else {
-                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
-                    }
+                    return giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
                 }
             }
             else if (args[0].equalsIgnoreCase("take"))
             {
                 if (args.length == 3)
                 {
-                    //TODO: Find a better way to do this, I would use getOfflinePlayer but lookup by name is deprecated
-                    Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(args[1])).findFirst();
-                    if (offlinePlayer.isPresent()) {
-                        UUID uuid = offlinePlayer.get().getUniqueId();
-                        double amount = Double.parseDouble(args[2]);
-                        Account account = economy.getAccount(uuid);
-                        account.setBalance(account.getBalance() - amount);
-                        account.save();
-                        commandSender.sendMessage(economy.formatPhrase("balance.take", amount, offlinePlayer.get().getName()));
-                    } else {
-                        commandSender.sendMessage(economy.formatPhrase("error.player.notfound", args[1]));
-                    }
+                    return takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
                 }
             }
             else if (args[0].equalsIgnoreCase("send"))
             {
-                commandSender.sendMessage("Not implemented");
+                if (args.length == 3)
+                {
+                    return sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                }
             }
             else if (args[0].equalsIgnoreCase("top"))
             {
@@ -106,18 +78,161 @@ public class MoneyCommand implements CommandExecutor
                     return String.format("%s - %f", name, x.getValue());
                 }).forEach(commandSender::sendMessage);
             }
-            else if (args[0].equalsIgnoreCase("help"))
-            {
-                commandSender.sendMessage(economy.formatPhrase("help"));
-            }
             else
             {
                 return false;
             }
             return true;
         }
-        Account account = economy.getAccount(((Player) commandSender).getUniqueId());
-        commandSender.sendMessage(economy.formatPhrase("balance.get", account.getBalance()));
+        return geBalance(commandSender, null);
+    }
+
+    private boolean sendBalance(CommandSender commandSender, String name, Double amount) {
+        OfflinePlayer offlinePlayer = getPlayerByName(name);
+        if (offlinePlayer != null)
+        {
+            Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
+            if (amount <= 0) {
+                commandSender.sendMessage(economy.formatPhrase("error.input.toolow"));
+                return true;
+            }
+            if (sender.getBalance() - amount <= 0)
+            {
+                commandSender.sendMessage(economy.formatPhrase("error.balance.toolow"));
+                return true;
+            }
+
+            UUID uuid = offlinePlayer.getUniqueId();
+            Account reciver = economy.getAccount(uuid);
+            if (sender.getUuid().equals(reciver.getUuid()))
+            {
+                commandSender.sendMessage(economy.formatPhrase("error.player.yourself"));
+                return true;
+            }
+            sender.setBalance(sender.getBalance() - amount);
+            sender.save();
+            reciver.setBalance(reciver.getBalance() + amount);
+            reciver.save();
+            commandSender.sendMessage(economy.formatPhrase("balance.send", amount, offlinePlayer.getName()));
+        }
+        else
+        {
+            commandSender.sendMessage(economy.formatPhrase("error.player.notfound", name));
+        }
         return true;
+    }
+
+    private boolean giveBalance(CommandSender sender, String name, Double amount)
+    {
+        OfflinePlayer offlinePlayer = getPlayerByName(name);
+        if (offlinePlayer != null)
+        {
+            UUID uuid = offlinePlayer.getUniqueId();
+            Account account = economy.getAccount(uuid);
+            account.setBalance(account.getBalance() + amount);
+            account.save();
+            sender.sendMessage(economy.formatPhrase("balance.give", amount, offlinePlayer.getName()));
+        }
+        else
+        {
+            sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
+        }
+        return true;
+    }
+
+    private boolean takeBalance(CommandSender sender, String name, Double amount)
+    {
+        OfflinePlayer offlinePlayer = getPlayerByName(name);
+        if (offlinePlayer != null)
+        {
+            UUID uuid = offlinePlayer.getUniqueId();
+            Account account = economy.getAccount(uuid);
+            account.setBalance(account.getBalance() - amount);
+            account.save();
+            sender.sendMessage(economy.formatPhrase("balance.take", amount, offlinePlayer.getName()));
+        }
+        else
+        {
+            sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
+        }
+        return true;
+    }
+
+    private boolean setBalance(CommandSender sender, String name, Double amount)
+    {
+        if (name != null)
+        {
+            OfflinePlayer offlinePlayer = getPlayerByName(name);
+            if (offlinePlayer != null)
+            {
+                UUID uuid = offlinePlayer.getUniqueId();
+                Account account = economy.getAccount(uuid);
+                account.setBalance(amount);
+                account.save();
+                sender.sendMessage(economy.formatPhrase("balance.set.other", offlinePlayer.getName(), account.getBalance()));
+            }
+            else
+            {
+                sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
+            }
+        }
+        else
+        {
+            Account account = economy.getAccount(((Player) sender).getUniqueId());
+            account.setBalance(amount);
+            account.save();
+            sender.sendMessage(economy.formatPhrase("balance.set.self", account.getBalance()));
+        }
+        return true;
+    }
+
+    private boolean geBalance(CommandSender sender, String name)
+    {
+        if (name == null)
+        {
+            Account account = economy.getAccount(((Player) sender).getUniqueId());
+            sender.sendMessage(economy.formatPhrase("balance.get.self", account.getBalance()));
+        }
+        else
+        {
+            OfflinePlayer playerByName = getPlayerByName(name);
+            if (playerByName != null)
+            {
+                Account account = economy.getAccount(playerByName.getUniqueId());
+                sender.sendMessage(economy.formatPhrase("balance.get.other", playerByName.getName(), account.getBalance()));
+            }
+            else
+            {
+                sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Wrapper method for getting a Player object by name.
+     * This will first check for an online player by the name and then check through all offline players for it.
+     *
+     * @param name Player name
+     * @return OfflinePlayer object if the player is found else it returns null.
+     */
+    private OfflinePlayer getPlayerByName(String name)
+    {
+        Player player = economy.getServer().getPlayer(name);
+        if (player != null)
+        {
+            return player;
+        }
+        else
+        {
+            //TODO: Add some sort of caching of this so we don't have to do this every time.
+            Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(name)).findFirst();
+            if (offlinePlayer.isPresent())
+            {
+                return offlinePlayer.get();
+            }
+        }
+        return null;
     }
 }
