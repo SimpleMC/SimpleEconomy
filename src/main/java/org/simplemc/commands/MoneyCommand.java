@@ -27,72 +27,63 @@ public class MoneyCommand implements CommandExecutor
     {
         if (args.length >= 1)
         {
-            if (args[0].equalsIgnoreCase("get"))
-            {
-                if (args.length == 2)
-                {
-                    return geBalance(commandSender, args[1]);
-                }
-                else
-                {
-                    return geBalance(commandSender, null);
-                }
+            switch (SubCommands.valueOf(args[0].toUpperCase())){
+                case GET:
+                    if (args.length == 2)
+                    {
+                        return geBalance(commandSender, args[1]);
+                    }
+                    else
+                    {
+                        return geBalance(commandSender, null);
+                    }
+                case SET:
+                    if (args.length == 2)
+                    {
+                        return setBalance(commandSender, null, Double.parseDouble(args[1]));
+                    }
+                    else if (args.length == 3)
+                    {
+                        return setBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                    }
+                case GIVE:
+                    if (args.length == 3)
+                    {
+                        return giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                    }
+                case TAKE:
+                    if (args.length == 3)
+                    {
+                        return takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                    }
+                case SEND:
+                    if (args.length == 3)
+                    {
+                        return sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                    }
+                case TOP:
+                    HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
+                    top.entrySet().stream().map(x -> {
+                        String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
+                        return String.format("%s - %f", name, x.getValue());
+                    }).forEach(commandSender::sendMessage);
+                case HELP:
+                    commandSender.sendMessage(economy.formatPhrase("help"));
+                    return true;
             }
-            else if (args[0].equalsIgnoreCase("set"))
-            {
-                if (args.length == 2)
-                {
-                    return setBalance(commandSender, null, Double.parseDouble(args[1]));
-                }
-                else if (args.length == 3)
-                {
-                    return setBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                }
-            }
-            else if (args[0].equalsIgnoreCase("give"))
-            {
-                if (args.length == 3)
-                {
-                    return giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                }
-            }
-            else if (args[0].equalsIgnoreCase("take"))
-            {
-                if (args.length == 3)
-                {
-                    return takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                }
-            }
-            else if (args[0].equalsIgnoreCase("send"))
-            {
-                if (args.length == 3)
-                {
-                    return sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                }
-            }
-            else if (args[0].equalsIgnoreCase("top"))
-            {
-                HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
-                top.entrySet().stream().map(x -> {
-                    String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
-                    return String.format("%s - %f", name, x.getValue());
-                }).forEach(commandSender::sendMessage);
-            }
-            else
-            {
-                return false;
-            }
-            return true;
+
         }
         return geBalance(commandSender, null);
     }
 
-    private boolean sendBalance(CommandSender commandSender, String name, Double amount) {
+    private boolean sendBalance(CommandSender commandSender, String name, Double amount)
+    {
         OfflinePlayer offlinePlayer = getPlayerByName(name);
         if (offlinePlayer != null)
         {
             Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
-            if (amount <= 0) {
+            if (amount <= 0)
+            {
                 commandSender.sendMessage(economy.formatPhrase("error.input.toolow"));
                 return true;
             }
@@ -235,4 +226,15 @@ public class MoneyCommand implements CommandExecutor
         }
         return null;
     }
+}
+
+enum SubCommands
+{
+    GET,
+    SET,
+    GIVE,
+    TAKE,
+    SEND,
+    TOP,
+    HELP
 }
