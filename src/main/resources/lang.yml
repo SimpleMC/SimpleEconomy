@@ -1,15 +1,15 @@
 phrases:
   balance:
     get:
-      self: "[Money]: Your balance is %f."
-      other: "[Money]: %s's balance is %f."
+      self: "[Money]: Your balance is %s."
+      other: "[Money]: %s's balance is %s."
     set:
-      self: "[Money]: Your balance has been set to %f."
-      other: "[Money]: You have set %s's balance to %f."
-    give: "[Money]: You gave %f to %s."
-    take: "[Money]: You took %f away from %s."
-    send: "[Money]: You sent %f to %s."
-    recived: "[Money]: You recived %f from %s."
+      self: "[Money]: Your balance has been set to %s."
+      other: "[Money]: You have set %s's balance to %s."
+    give: "[Money]: You gave %s to %s."
+    take: "[Money]: You took %s away from %s."
+    send: "[Money]: You sent %s to %s."
+    recived: "[Money]: You recived %s from %s."
   error:
     input:
       toolow: "[Money]: Sorry, the amount you have entered is too low."

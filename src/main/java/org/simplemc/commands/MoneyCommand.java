@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simplemc.Account;
 import org.simplemc.SimpleEconomy;
+import org.simplemc.utilities.StringUtilities;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -120,7 +121,7 @@ public class MoneyCommand implements CommandExecutor
                 Account account = economy.getAccount(profile.getUniqueId());
                 account.setBalance(amount);
                 account.save();
-                sender.sendMessage(economy.formatPhrase("balance.set.other", profile.getName(), account.getBalance()));
+                sender.sendMessage(economy.formatPhrase("balance.set.other", profile.getName(), StringUtilities.formatDouble(account.getBalance())));
             }
             else
             {
@@ -132,7 +133,7 @@ public class MoneyCommand implements CommandExecutor
             Account account = economy.getAccount(((Player) sender).getUniqueId());
             account.setBalance(amount);
             account.save();
-            sender.sendMessage(economy.formatPhrase("balance.set.self", account.getBalance()));
+            sender.sendMessage(economy.formatPhrase("balance.set.self", StringUtilities.formatDouble(account.getBalance())));
         }
     }
 
@@ -141,7 +142,7 @@ public class MoneyCommand implements CommandExecutor
         if (name == null)
         {
             Account account = economy.getAccount(((Player) sender).getUniqueId());
-            sender.sendMessage(economy.formatPhrase("balance.get.self", account.getBalance()));
+            sender.sendMessage(economy.formatPhrase("balance.get.self", StringUtilities.formatDouble(account.getBalance())));
         }
         else
         {
@@ -149,7 +150,7 @@ public class MoneyCommand implements CommandExecutor
             if (profile != null)
             {
                 Account account = economy.getAccount(profile.getUniqueId());
-                sender.sendMessage(economy.formatPhrase("balance.get.other", profile.getName(), account.getBalance()));
+                sender.sendMessage(economy.formatPhrase("balance.get.other", profile.getName(), StringUtilities.formatDouble(account.getBalance())));
             }
             else
             {
@@ -225,7 +226,7 @@ enum SubCommand
                         Profile profile = economy.getProfileFromUUID(x.getKey());
                         if (profile != null)
                         {
-                            return String.format("%s - %f", profile.getName(), x.getValue());
+                            return String.format("%s - %s", profile.getName(), StringUtilities.formatDouble(x.getValue()));
                         }
                         else
                         {
