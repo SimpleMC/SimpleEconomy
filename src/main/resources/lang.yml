@@ -16,6 +16,7 @@ phrases:
     balance:
       toolow: "[Money]: Sorry, you do not have enough funds for this transaction."
     player:
+      self: "[Money]: Sorry, you cannot send money to yourself!"
       notfound: "[Money]: Sorry we could not find a player by the name of %s."
   help: |
           --- Money ---

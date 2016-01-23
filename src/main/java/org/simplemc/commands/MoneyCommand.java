@@ -98,7 +98,7 @@ public class MoneyCommand implements CommandExecutor
             Account reciver = economy.getAccount(uuid);
             if (sender.getUuid().equals(reciver.getUuid()))
             {
-                commandSender.sendMessage(economy.formatPhrase("error.player.yourself"));
+                commandSender.sendMessage(economy.formatPhrase("error.player.self"));
                 return true;
             }
             sender.setBalance(sender.getBalance() - amount);
