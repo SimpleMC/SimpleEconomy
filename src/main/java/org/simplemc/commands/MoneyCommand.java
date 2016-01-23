@@ -54,12 +54,12 @@ public class MoneyCommand implements CommandExecutor
         if (profile != null)
         {
             Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
-            Account reciver = economy.getAccount(profile.getUniqueId());
+            Account receiver = economy.getAccount(profile.getUniqueId());
             if (sender.getBalance() - amount <= 0)
             {
                 commandSender.sendMessage(economy.formatPhrase("error.balance.toolow"));
             }
-            else if (sender.getUuid().equals(reciver.getUuid()))
+            else if (sender.getUuid().equals(receiver.getUuid()))
             {
                 commandSender.sendMessage(economy.formatPhrase("error.player.self"));
             }
@@ -67,8 +67,8 @@ public class MoneyCommand implements CommandExecutor
             {
                 sender.setBalance(sender.getBalance() - amount);
                 sender.save();
-                reciver.setBalance(reciver.getBalance() + amount);
-                reciver.save();
+                receiver.setBalance(receiver.getBalance() + amount);
+                receiver.save();
                 commandSender.sendMessage(economy.formatPhrase("balance.send", amount, profile.getName()));
             }
         }
