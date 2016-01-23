@@ -20,7 +20,9 @@ public class PlayerListener implements Listener
     @EventHandler
     public void onLoginEvent(PlayerLoginEvent event)
     {
-        economy.getAccount(event.getPlayer().getUniqueId());
+        if(economy.getAccount(event.getPlayer().getUniqueId()) == null){
+            economy.createAccount(event.getPlayer().getUniqueId(), economy.getConfig().getInt("defaults.balance"));
+        }
         economy.cache.put(new Profile(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
     }
 

@@ -55,10 +55,14 @@ public class MoneyCommand implements CommandExecutor
     protected static void sendBalance(SimpleEconomy economy, CommandSender commandSender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
-        if (profile != null)
+        Account receiver = null;
+        if (profile != null){
+            receiver = economy.getAccount(profile.getUniqueId());
+        }
+
+        if (receiver != null)
         {
             Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
-            Account receiver = economy.getAccount(profile.getUniqueId());
             if (sender.getBalance() - amount <= 0)
             {
                 commandSender.sendMessage(economy.formatPhrase("error.balance.toolow"));
@@ -86,9 +90,13 @@ public class MoneyCommand implements CommandExecutor
     protected static void giveBalance(SimpleEconomy economy, CommandSender sender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
-        if (profile != null)
+        Account account = null;
+        if (profile != null){
+            account = economy.getAccount(profile.getUniqueId());
+        }
+
+        if (account != null)
         {
-            Account account = economy.getAccount(profile.getUniqueId());
             account.setBalance(account.getBalance() + amount);
             account.save();
             sender.sendMessage(economy.formatPhrase("balance.give", amount, profile.getName()));
@@ -102,9 +110,13 @@ public class MoneyCommand implements CommandExecutor
     protected static void takeBalance(SimpleEconomy economy, CommandSender sender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
-        if (profile != null)
+        Account account = null;
+        if (profile != null){
+            account = economy.getAccount(profile.getUniqueId());
+        }
+
+        if (account != null)
         {
-            Account account = economy.getAccount(profile.getUniqueId());
             account.setBalance(account.getBalance() - amount);
             account.save();
             sender.sendMessage(economy.formatPhrase("balance.take", amount, profile.getName()));
@@ -120,9 +132,13 @@ public class MoneyCommand implements CommandExecutor
         if (name != null)
         {
             Profile profile = economy.getProfileFromName(name);
-            if (profile != null)
+            Account account = null;
+            if (profile != null){
+                account = economy.getAccount(profile.getUniqueId());
+            }
+
+            if (account != null)
             {
-                Account account = economy.getAccount(profile.getUniqueId());
                 account.setBalance(amount);
                 account.save();
                 sender.sendMessage(economy.formatPhrase("balance.set.other", profile.getName(), StringUtilities.formatDouble(account.getBalance())));
@@ -151,9 +167,13 @@ public class MoneyCommand implements CommandExecutor
         else
         {
             Profile profile = economy.getProfileFromName(name);
-            if (profile != null)
+            Account account = null;
+            if (profile != null){
+                account = economy.getAccount(profile.getUniqueId());
+            }
+
+            if (account != null)
             {
-                Account account = economy.getAccount(profile.getUniqueId());
                 sender.sendMessage(economy.formatPhrase("balance.get.other", profile.getName(), StringUtilities.formatDouble(account.getBalance())));
             }
             else

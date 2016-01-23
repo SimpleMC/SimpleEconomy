@@ -112,7 +112,7 @@ public class SimpleEconomy extends JavaPlugin
         {
             e.printStackTrace();
         }
-        return createAccount(uuid, getConfig().getInt("defaults.balance"));
+        return null;
     }
 
     /**
