@@ -51,6 +51,7 @@ shadowJar {
     dependencies {
         exclude(dependency('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'))
     }
+    relocate 'com.sk89q.squirrelid', 'org.simplemc.com.sk89q.squirrelid'
 }
 
 
