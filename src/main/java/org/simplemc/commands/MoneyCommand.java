@@ -67,6 +67,7 @@ public class MoneyCommand implements CommandExecutor
                         String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
                         return String.format("%s - %f", name, x.getValue());
                     }).forEach(commandSender::sendMessage);
+                    return true;
                 case HELP:
                     commandSender.sendMessage(economy.formatPhrase("help"));
                     return true;
