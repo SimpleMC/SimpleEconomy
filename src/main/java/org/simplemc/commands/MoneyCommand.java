@@ -27,7 +27,16 @@ public class MoneyCommand implements CommandExecutor
     {
         if (args.length >= 1)
         {
-            switch (SubCommands.valueOf(args[0].toUpperCase())){
+            SubCommands subCommands;
+            try
+            {
+                subCommands = SubCommands.valueOf(args[0].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
+                return true;
+            }
+
+            switch (subCommands){
                 case GET:
                     if (args.length == 2)
                     {
@@ -70,6 +79,9 @@ public class MoneyCommand implements CommandExecutor
                     return true;
                 case HELP:
                     commandSender.sendMessage(economy.formatPhrase("help"));
+                    return true;
+                default:
+                    commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
                     return true;
             }
 

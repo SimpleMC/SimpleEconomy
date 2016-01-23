@@ -18,6 +18,8 @@ phrases:
     player:
       self: "[Money]: Sorry, you cannot send money to yourself!"
       notfound: "[Money]: Sorry we could not find a player by the name of %s."
+    subcommand:
+      notfound: "[Money]: Sorry, the subcommand you entered is not valid. See /money help"
   help: |
           --- Money ---
           /money get - Gets your current balance
