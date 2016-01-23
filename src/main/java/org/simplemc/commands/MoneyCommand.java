@@ -25,68 +25,88 @@ public class MoneyCommand implements CommandExecutor
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args)
     {
+        boolean isHandled = false;
         if (args.length >= 1)
         {
             SubCommands subCommands;
             try
             {
                 subCommands = SubCommands.valueOf(args[0].toUpperCase());
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e)
+            {
                 commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
-                return true;
+                return false;
             }
 
-            switch (subCommands){
+            switch (subCommands)
+            {
                 case GET:
                     if (args.length == 2)
                     {
-                        return geBalance(commandSender, args[1]);
+                        getBalance(commandSender, args[1]);
                     }
                     else
                     {
-                        return geBalance(commandSender, null);
+                        getBalance(commandSender, null);
                     }
+                    isHandled = true;
+                    break;
                 case SET:
                     if (args.length == 2)
                     {
-                        return setBalance(commandSender, null, Double.parseDouble(args[1]));
+                        setBalance(commandSender, null, Double.parseDouble(args[1]));
                     }
                     else if (args.length == 3)
                     {
-                        return setBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                        setBalance(commandSender, args[1], Double.parseDouble(args[2]));
                     }
+                    isHandled = true;
+                    break;
                 case GIVE:
                     if (args.length == 3)
                     {
-                        return giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                        giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
                     }
+                    isHandled = true;
+                    break;
                 case TAKE:
                     if (args.length == 3)
                     {
-                        return takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                        takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
                     }
+                    isHandled = true;
+                    break;
                 case SEND:
                     if (args.length == 3)
                     {
-                        return sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
+                        sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
                     }
+                    isHandled = true;
+                    break;
                 case TOP:
                     HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
                     top.entrySet().stream().map(x -> {
                         String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
                         return String.format("%s - %f", name, x.getValue());
                     }).forEach(commandSender::sendMessage);
-                    return true;
+                    isHandled = true;
+                    break;
                 case HELP:
                     commandSender.sendMessage(economy.formatPhrase("help"));
-                    return true;
+                    isHandled = true;
+                    break;
                 default:
-                    commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
-                    return true;
+                    isHandled = false;
+                    break;
             }
 
         }
-        return geBalance(commandSender, null);
+        if (!isHandled)
+        {
+            commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
+        }
+        return isHandled;
     }
 
     private boolean sendBalance(CommandSender commandSender, String name, Double amount)
@@ -190,7 +210,7 @@ public class MoneyCommand implements CommandExecutor
         return true;
     }
 
-    private boolean geBalance(CommandSender sender, String name)
+    private boolean getBalance(CommandSender sender, String name)
     {
         if (name == null)
         {
