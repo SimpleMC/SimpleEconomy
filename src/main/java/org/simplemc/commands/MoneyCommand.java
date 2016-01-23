@@ -197,10 +197,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                    if (args.length == 3)
-                    {
                         MoneyCommand.giveBalance(economy, sender, args[1], Double.parseDouble(args[2]));
-                    }
                 }
             },
     TAKE(3, 3)
@@ -208,10 +205,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                    if (args.length == 3)
-                    {
                         MoneyCommand.takeBalance(economy, sender, args[1], Double.parseDouble(args[2]));
-                    }
                 }
             },
     SEND(3, 3)
@@ -219,10 +213,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                    if (args.length == 3)
-                    {
                         MoneyCommand.sendBalance(economy, sender, args[1], Double.parseDouble(args[2]));
-                    }
                 }
             },
     TOP
