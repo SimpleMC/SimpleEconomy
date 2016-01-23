@@ -11,6 +11,7 @@ phrases:
     send: "[Money]: You sent %s to %s."
     recived: "[Money]: You recived %s from %s."
   error:
+    nopermission: "[Money]: Sorry, you don't have permission for this command."
     input:
       notanumber: "[Money]: Sorry, the amount you entered does not seem to be a number."
       toolow: "[Money]: Sorry, the amount you have entered is too low."

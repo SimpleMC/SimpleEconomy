@@ -7,4 +7,4 @@ commands:
    money:
       description: Kills your dog and eats your homework.
       permission: simple.economy.money
-      permission-message: You dont have permission to use this command!
+      permission-message: "[Money]: Sorry, you don't have permission for this command."

@@ -31,7 +31,10 @@ public class MoneyCommand implements CommandExecutor
             {
                 SubCommand sub = SubCommand.valueOf(args[0].toUpperCase());
                 isHandled = true;
-                if (args.length >= sub.minArgs && args.length <= sub.maxArgs)
+                if (!commandSender.hasPermission(sub.permission)) {
+                    commandSender.sendMessage(economy.formatPhrase("error.nopermission"));
+                }
+                else if (args.length >= sub.minArgs && args.length <= sub.maxArgs)
                 {
                     sub.execute(economy, commandSender, args);
                 }
@@ -198,7 +201,7 @@ public class MoneyCommand implements CommandExecutor
 
 enum SubCommand
 {
-    GET(1, 2)
+    GET(1, 2, "simple.economy.money.get")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -213,7 +216,7 @@ enum SubCommand
                     }
                 }
             },
-    SET(2, 3)
+    SET(2, 3, "simple.economy.money.set")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -228,7 +231,7 @@ enum SubCommand
                     }
                 }
             },
-    GIVE(3, 3)
+    GIVE(3, 3, "simple.economy.money.give")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -236,7 +239,7 @@ enum SubCommand
                     MoneyCommand.giveBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
-    TAKE(3, 3)
+    TAKE(3, 3, "simple.economy.money.take")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -244,7 +247,7 @@ enum SubCommand
                     MoneyCommand.takeBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
-    SEND(3, 3)
+    SEND(3, 3, "simple.economy.money.send")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -252,7 +255,7 @@ enum SubCommand
                     MoneyCommand.sendBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
-    TOP
+    TOP("simple.economy.money.top")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -271,7 +274,7 @@ enum SubCommand
                     }).filter(x -> !x.isEmpty()).forEach(sender::sendMessage);
                 }
             },
-    HELP
+    HELP("simple.economy.money.help")
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
@@ -282,25 +285,27 @@ enum SubCommand
 
     final int minArgs; // (minimum) number of arguments subcommand expects
     final int maxArgs; // (maximum) number of arguments subcommand expects
-
+    final String permission;
     /**
      * Create subcommand
-     *
-     * @param minArgs (minimun) number of arguments subcommand expects
+     *  @param minArgs (minimun) number of arguments subcommand expects
      * @param maxArgs (maximum) number of arguments subcommand expects
+     * @param permission Permissions node for this command.
      */
-    SubCommand(int minArgs, int maxArgs)
+    SubCommand(int minArgs, int maxArgs, String permission)
     {
         this.minArgs = minArgs;
         this.maxArgs = maxArgs;
+        this.permission = permission;
     }
 
     /**
      * Default to no required arguments
+     * @param permission Permissions node for this command.
      */
-    SubCommand()
+    SubCommand(String permission)
     {
-        this(1, 1);
+        this(1, 1, permission);
     }
 
     public abstract void execute(SimpleEconomy economy, CommandSender sender, String... args);
