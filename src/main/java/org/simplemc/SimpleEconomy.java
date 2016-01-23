@@ -2,7 +2,10 @@ package org.simplemc;
 
 import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.cache.SQLiteCache;
-import com.sk89q.squirrelid.resolver.*;
+import com.sk89q.squirrelid.resolver.BukkitPlayerService;
+import com.sk89q.squirrelid.resolver.CacheForwardingService;
+import com.sk89q.squirrelid.resolver.CombinedProfileService;
+import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,9 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
 
 public class SimpleEconomy extends JavaPlugin

@@ -49,6 +49,9 @@ public class MoneyCommand implements CommandExecutor
                 commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
             }
         }
+        if (!isHandled){
+            SubCommand.GET.execute(economy, commandSender, args);
+        }
         return isHandled;
     }
 
@@ -56,7 +59,8 @@ public class MoneyCommand implements CommandExecutor
     {
         Profile profile = economy.getProfileFromName(name);
         Account receiver = null;
-        if (profile != null){
+        if (profile != null)
+        {
             receiver = economy.getAccount(profile.getUniqueId());
         }
 
@@ -70,6 +74,10 @@ public class MoneyCommand implements CommandExecutor
             else if (sender.getUuid().equals(receiver.getUuid()))
             {
                 commandSender.sendMessage(economy.formatPhrase("error.player.self"));
+            }
+            else if (amount <= 0)
+            {
+                commandSender.sendMessage(economy.formatPhrase("error.input.toolow"));
             }
             else
             {
@@ -91,7 +99,8 @@ public class MoneyCommand implements CommandExecutor
     {
         Profile profile = economy.getProfileFromName(name);
         Account account = null;
-        if (profile != null){
+        if (profile != null)
+        {
             account = economy.getAccount(profile.getUniqueId());
         }
 
@@ -111,7 +120,8 @@ public class MoneyCommand implements CommandExecutor
     {
         Profile profile = economy.getProfileFromName(name);
         Account account = null;
-        if (profile != null){
+        if (profile != null)
+        {
             account = economy.getAccount(profile.getUniqueId());
         }
 
@@ -133,7 +143,8 @@ public class MoneyCommand implements CommandExecutor
         {
             Profile profile = economy.getProfileFromName(name);
             Account account = null;
-            if (profile != null){
+            if (profile != null)
+            {
                 account = economy.getAccount(profile.getUniqueId());
             }
 
@@ -168,7 +179,8 @@ public class MoneyCommand implements CommandExecutor
         {
             Profile profile = economy.getProfileFromName(name);
             Account account = null;
-            if (profile != null){
+            if (profile != null)
+            {
                 account = economy.getAccount(profile.getUniqueId());
             }
 
@@ -216,12 +228,12 @@ enum SubCommand
                     }
                 }
             },
-    GIVE(3,3)
+    GIVE(3, 3)
             {
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                        MoneyCommand.giveBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    MoneyCommand.giveBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
     TAKE(3, 3)
@@ -229,7 +241,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                        MoneyCommand.takeBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    MoneyCommand.takeBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
     SEND(3, 3)
@@ -237,7 +249,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
-                        MoneyCommand.sendBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    MoneyCommand.sendBalance(economy, sender, args[1], Double.parseDouble(args[2]));
                 }
             },
     TOP
