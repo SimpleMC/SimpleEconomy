@@ -1,3 +1,10 @@
 machine:
   java:
     version: oraclejdk8
+dependencies:
+  pre:
+    - chmod +x gradlew
+test:
+  post:
+    - "./gradlew build"
+    - "cp -v ~/SimpleEconomy/build/libs/simpleeconomy-all-*.jar $CIRCLE_ARTIFACTS/."
