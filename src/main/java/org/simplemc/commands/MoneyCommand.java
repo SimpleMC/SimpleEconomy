@@ -1,5 +1,6 @@
 package org.simplemc.commands;
 
+import com.sk89q.squirrelid.Profile;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -87,9 +88,13 @@ public class MoneyCommand implements CommandExecutor
                 case TOP:
                     HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
                     top.entrySet().stream().map(x -> {
-                        String name = economy.getServer().getOfflinePlayer(x.getKey()).getName();
-                        return String.format("%s - %f", name, x.getValue());
-                    }).forEach(commandSender::sendMessage);
+                        Profile profile = economy.getProfileFromUUID(x.getKey());
+                        if (profile != null) {
+                            return String.format("%s - %f", profile.getName(), x.getValue());
+                        } else {
+                            return "";
+                        }
+                    }).filter(x -> !x.isEmpty()).forEach(commandSender::sendMessage);
                     isHandled = true;
                     break;
                 case HELP:
@@ -111,8 +116,8 @@ public class MoneyCommand implements CommandExecutor
 
     private boolean sendBalance(CommandSender commandSender, String name, Double amount)
     {
-        OfflinePlayer offlinePlayer = getPlayerByName(name);
-        if (offlinePlayer != null)
+        Profile profile = economy.getProfileFromName(name);
+        if (profile != null)
         {
             Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
             if (amount <= 0)
@@ -126,8 +131,7 @@ public class MoneyCommand implements CommandExecutor
                 return true;
             }
 
-            UUID uuid = offlinePlayer.getUniqueId();
-            Account reciver = economy.getAccount(uuid);
+            Account reciver = economy.getAccount(profile.getUniqueId());
             if (sender.getUuid().equals(reciver.getUuid()))
             {
                 commandSender.sendMessage(economy.formatPhrase("error.player.self"));
@@ -137,7 +141,7 @@ public class MoneyCommand implements CommandExecutor
             sender.save();
             reciver.setBalance(reciver.getBalance() + amount);
             reciver.save();
-            commandSender.sendMessage(economy.formatPhrase("balance.send", amount, offlinePlayer.getName()));
+            commandSender.sendMessage(economy.formatPhrase("balance.send", amount, profile.getName()));
         }
         else
         {
@@ -148,14 +152,13 @@ public class MoneyCommand implements CommandExecutor
 
     private boolean giveBalance(CommandSender sender, String name, Double amount)
     {
-        OfflinePlayer offlinePlayer = getPlayerByName(name);
-        if (offlinePlayer != null)
+        Profile profile = economy.getProfileFromName(name);
+        if (profile != null)
         {
-            UUID uuid = offlinePlayer.getUniqueId();
-            Account account = economy.getAccount(uuid);
+            Account account = economy.getAccount(profile.getUniqueId());
             account.setBalance(account.getBalance() + amount);
             account.save();
-            sender.sendMessage(economy.formatPhrase("balance.give", amount, offlinePlayer.getName()));
+            sender.sendMessage(economy.formatPhrase("balance.give", amount, profile.getName()));
         }
         else
         {
@@ -166,14 +169,13 @@ public class MoneyCommand implements CommandExecutor
 
     private boolean takeBalance(CommandSender sender, String name, Double amount)
     {
-        OfflinePlayer offlinePlayer = getPlayerByName(name);
-        if (offlinePlayer != null)
+        Profile profile = economy.getProfileFromName(name);
+        if (profile != null)
         {
-            UUID uuid = offlinePlayer.getUniqueId();
-            Account account = economy.getAccount(uuid);
+            Account account = economy.getAccount(profile.getUniqueId());
             account.setBalance(account.getBalance() - amount);
             account.save();
-            sender.sendMessage(economy.formatPhrase("balance.take", amount, offlinePlayer.getName()));
+            sender.sendMessage(economy.formatPhrase("balance.take", amount, profile.getName()));
         }
         else
         {
@@ -186,14 +188,13 @@ public class MoneyCommand implements CommandExecutor
     {
         if (name != null)
         {
-            OfflinePlayer offlinePlayer = getPlayerByName(name);
-            if (offlinePlayer != null)
+            Profile profile = economy.getProfileFromName(name);
+            if (profile != null)
             {
-                UUID uuid = offlinePlayer.getUniqueId();
-                Account account = economy.getAccount(uuid);
+                Account account = economy.getAccount(profile.getUniqueId());
                 account.setBalance(amount);
                 account.save();
-                sender.sendMessage(economy.formatPhrase("balance.set.other", offlinePlayer.getName(), account.getBalance()));
+                sender.sendMessage(economy.formatPhrase("balance.set.other", profile.getName(), account.getBalance()));
             }
             else
             {
@@ -219,11 +220,11 @@ public class MoneyCommand implements CommandExecutor
         }
         else
         {
-            OfflinePlayer playerByName = getPlayerByName(name);
-            if (playerByName != null)
+            Profile profile = economy.getProfileFromName(name);
+            if (profile != null)
             {
-                Account account = economy.getAccount(playerByName.getUniqueId());
-                sender.sendMessage(economy.formatPhrase("balance.get.other", playerByName.getName(), account.getBalance()));
+                Account account = economy.getAccount(profile.getUniqueId());
+                sender.sendMessage(economy.formatPhrase("balance.get.other", profile.getName(), account.getBalance()));
             }
             else
             {
@@ -231,33 +232,6 @@ public class MoneyCommand implements CommandExecutor
             }
         }
         return true;
-    }
-
-
-    /**
-     * Wrapper method for getting a Player object by name.
-     * This will first check for an online player by the name and then check through all offline players for it.
-     *
-     * @param name Player name
-     * @return OfflinePlayer object if the player is found else it returns null.
-     */
-    private OfflinePlayer getPlayerByName(String name)
-    {
-        Player player = economy.getServer().getPlayer(name);
-        if (player != null)
-        {
-            return player;
-        }
-        else
-        {
-            //TODO: Add some sort of caching of this so we don't have to do this every time.
-            Optional<OfflinePlayer> offlinePlayer = Arrays.asList(economy.getServer().getOfflinePlayers()).stream().filter(x -> x.getName().equalsIgnoreCase(name)).findFirst();
-            if (offlinePlayer.isPresent())
-            {
-                return offlinePlayer.get();
-            }
-        }
-        return null;
     }
 }
 

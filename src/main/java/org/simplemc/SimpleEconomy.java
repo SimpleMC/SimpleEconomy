@@ -1,5 +1,8 @@
 package org.simplemc;
 
+import com.sk89q.squirrelid.Profile;
+import com.sk89q.squirrelid.cache.SQLiteCache;
+import com.sk89q.squirrelid.resolver.*;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,7 +14,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SimpleEconomy extends JavaPlugin
@@ -19,12 +24,27 @@ public class SimpleEconomy extends JavaPlugin
     private DatabaseManager databaseManager;
     HashMap<UUID, Account> accounts = new HashMap<>();
     YamlConfiguration languageConfig;
+    SQLiteCache cache;
+    private CacheForwardingService resolver;
 
     @Override
     public void onEnable()
     {
         getLogger().info(getName() + " is loading...");
         saveDefaultConfig();
+        File file = new File(getDataFolder(), "profilecache.sqlite");
+        try
+        {
+            cache = new SQLiteCache(file);
+        }
+        catch (IOException e)
+        {
+            getLogger().severe("Could not access the profile cache! Stopping");
+            getPluginLoader().disablePlugin(this);
+            e.printStackTrace();
+            return;
+        }
+        resolver = new CacheForwardingService(new CombinedProfileService(BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
         try
         {
             //Copy over a temp version of the language file as you are not supposed to use inputstreams for this according to the spigot javadocs.
@@ -119,12 +139,36 @@ public class SimpleEconomy extends JavaPlugin
 
     /**
      * Wrapper to format a given string from the YamlConfiguration for language.
+     *
      * @param phraseId The ID for the phrase minus the root name.
-     * @param objects Objects to be added by the formatter.
+     * @param objects  Objects to be added by the formatter.
      * @return The formatted string.
      */
     public String formatPhrase(String phraseId, Object... objects)
     {
         return String.format(languageConfig.getString("phrases." + phraseId), objects);
+    }
+
+    //TODO: Store result in DB
+    public Profile getProfileFromName(String name)
+    {
+        try
+        {
+            Profile profile = resolver.findByName(name);
+            if (profile != null)
+            {
+                return profile;
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Profile getProfileFromUUID(UUID uuid)
+    {
+        return cache.getIfPresent(uuid);
     }
 }

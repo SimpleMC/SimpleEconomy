@@ -1,5 +1,6 @@
 package org.simplemc;
 
+import com.sk89q.squirrelid.Profile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -20,6 +21,7 @@ public class PlayerListener implements Listener
     public void onLoginEvent(PlayerLoginEvent event)
     {
         economy.getAccount(event.getPlayer().getUniqueId());
+        economy.cache.put(new Profile(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
     }
 
     @EventHandler
