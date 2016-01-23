@@ -12,6 +12,7 @@ phrases:
     recived: "[Money]: You recived %s from %s."
   error:
     input:
+      notanumber: "[Money]: Sorry, the amount you entered does not seem to be a number."
       toolow: "[Money]: Sorry, the amount you have entered is too low."
     balance:
       toolow: "[Money]: Sorry, you do not have enough funds for this transaction."

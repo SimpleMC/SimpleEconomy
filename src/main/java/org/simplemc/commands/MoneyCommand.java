@@ -40,6 +40,10 @@ public class MoneyCommand implements CommandExecutor
                     commandSender.sendMessage(economy.formatPhrase("error.syntax.base", economy.formatPhrase("error.syntax." + sub.name().toLowerCase())));
                 }
             }
+            catch (NumberFormatException e)
+            {
+                commandSender.sendMessage(economy.formatPhrase("error.input.notanumber"));
+            }
             catch (IllegalArgumentException e)
             {
                 commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
