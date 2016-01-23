@@ -48,10 +48,10 @@ targetCompatibility = 1.8
 shadowJar {
     baseName = 'simpleeconomy-all'
     classifier = ''
+    relocate 'com.sk89q.squirrelid', 'org.simplemc.com.sk89q.squirrelid'
     dependencies {
         exclude(dependency('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'))
     }
-    relocate 'com.sk89q.squirrelid', 'org.simplemc.com.sk89q.squirrelid'
 }
 
 
