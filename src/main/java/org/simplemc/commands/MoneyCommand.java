@@ -1,22 +1,19 @@
 package org.simplemc.commands;
 
 import com.sk89q.squirrelid.Profile;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.simplemc.SimpleEconomy;
 import org.simplemc.Account;
+import org.simplemc.SimpleEconomy;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
 
 public class MoneyCommand implements CommandExecutor
 {
-    private final SimpleEconomy economy;
+    protected final SimpleEconomy economy;
 
     public MoneyCommand(SimpleEconomy economy)
     {
@@ -29,128 +26,60 @@ public class MoneyCommand implements CommandExecutor
         boolean isHandled = false;
         if (args.length >= 1)
         {
-            SubCommands subCommands;
             try
             {
-                subCommands = SubCommands.valueOf(args[0].toUpperCase());
+                SubCommand sub = SubCommand.valueOf(args[0].toUpperCase());
+                isHandled = true;
+                if (args.length >= sub.minArgs && args.length <= sub.maxArgs)
+                {
+                    sub.execute(economy, commandSender, args);
+                }
+                else
+                {
+                    // TODO improper number of args(each subcommand maybe should have a syntax helper?)
+                    commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
+                }
             }
             catch (IllegalArgumentException e)
             {
                 commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
-                return false;
             }
-
-            switch (subCommands)
-            {
-                case GET:
-                    if (args.length == 2)
-                    {
-                        getBalance(commandSender, args[1]);
-                    }
-                    else
-                    {
-                        getBalance(commandSender, null);
-                    }
-                    isHandled = true;
-                    break;
-                case SET:
-                    if (args.length == 2)
-                    {
-                        setBalance(commandSender, null, Double.parseDouble(args[1]));
-                    }
-                    else if (args.length == 3)
-                    {
-                        setBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                    }
-                    isHandled = true;
-                    break;
-                case GIVE:
-                    if (args.length == 3)
-                    {
-                        giveBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                    }
-                    isHandled = true;
-                    break;
-                case TAKE:
-                    if (args.length == 3)
-                    {
-                        takeBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                    }
-                    isHandled = true;
-                    break;
-                case SEND:
-                    if (args.length == 3)
-                    {
-                        sendBalance(commandSender, args[1], Double.parseDouble(args[2]));
-                    }
-                    isHandled = true;
-                    break;
-                case TOP:
-                    HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
-                    top.entrySet().stream().map(x -> {
-                        Profile profile = economy.getProfileFromUUID(x.getKey());
-                        if (profile != null) {
-                            return String.format("%s - %f", profile.getName(), x.getValue());
-                        } else {
-                            return "";
-                        }
-                    }).filter(x -> !x.isEmpty()).forEach(commandSender::sendMessage);
-                    isHandled = true;
-                    break;
-                case HELP:
-                    commandSender.sendMessage(economy.formatPhrase("help"));
-                    isHandled = true;
-                    break;
-                default:
-                    isHandled = false;
-                    break;
-            }
-
-        }
-        if (!isHandled)
-        {
-            commandSender.sendMessage(economy.formatPhrase("error.subcommand.notfound"));
         }
         return isHandled;
     }
 
-    private boolean sendBalance(CommandSender commandSender, String name, Double amount)
+    protected static void sendBalance(SimpleEconomy economy, CommandSender commandSender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
         if (profile != null)
         {
             Account sender = economy.getAccount(((Player) commandSender).getUniqueId());
-            if (amount <= 0)
-            {
-                commandSender.sendMessage(economy.formatPhrase("error.input.toolow"));
-                return true;
-            }
+            Account reciver = economy.getAccount(profile.getUniqueId());
             if (sender.getBalance() - amount <= 0)
             {
                 commandSender.sendMessage(economy.formatPhrase("error.balance.toolow"));
-                return true;
             }
-
-            Account reciver = economy.getAccount(profile.getUniqueId());
-            if (sender.getUuid().equals(reciver.getUuid()))
+            else if (sender.getUuid().equals(reciver.getUuid()))
             {
                 commandSender.sendMessage(economy.formatPhrase("error.player.self"));
-                return true;
             }
-            sender.setBalance(sender.getBalance() - amount);
-            sender.save();
-            reciver.setBalance(reciver.getBalance() + amount);
-            reciver.save();
-            commandSender.sendMessage(economy.formatPhrase("balance.send", amount, profile.getName()));
+            else
+            {
+                sender.setBalance(sender.getBalance() - amount);
+                sender.save();
+                reciver.setBalance(reciver.getBalance() + amount);
+                reciver.save();
+                commandSender.sendMessage(economy.formatPhrase("balance.send", amount, profile.getName()));
+            }
         }
         else
         {
             commandSender.sendMessage(economy.formatPhrase("error.player.notfound", name));
         }
-        return true;
+
     }
 
-    private boolean giveBalance(CommandSender sender, String name, Double amount)
+    protected static void giveBalance(SimpleEconomy economy, CommandSender sender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
         if (profile != null)
@@ -164,10 +93,9 @@ public class MoneyCommand implements CommandExecutor
         {
             sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
         }
-        return true;
     }
 
-    private boolean takeBalance(CommandSender sender, String name, Double amount)
+    protected static void takeBalance(SimpleEconomy economy, CommandSender sender, String name, Double amount)
     {
         Profile profile = economy.getProfileFromName(name);
         if (profile != null)
@@ -181,10 +109,9 @@ public class MoneyCommand implements CommandExecutor
         {
             sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
         }
-        return true;
     }
 
-    private boolean setBalance(CommandSender sender, String name, Double amount)
+    protected static void setBalance(SimpleEconomy economy, CommandSender sender, String name, Double amount)
     {
         if (name != null)
         {
@@ -208,10 +135,9 @@ public class MoneyCommand implements CommandExecutor
             account.save();
             sender.sendMessage(economy.formatPhrase("balance.set.self", account.getBalance()));
         }
-        return true;
     }
 
-    private boolean getBalance(CommandSender sender, String name)
+    protected static void getBalance(SimpleEconomy economy, CommandSender sender, String name)
     {
         if (name == null)
         {
@@ -231,17 +157,124 @@ public class MoneyCommand implements CommandExecutor
                 sender.sendMessage(economy.formatPhrase("error.player.notfound", name));
             }
         }
-        return true;
     }
 }
 
-enum SubCommands
+enum SubCommand
 {
-    GET,
-    SET,
-    GIVE,
-    TAKE,
-    SEND,
-    TOP,
+    GET(1, 2)
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    if (args.length == 2)
+                    {
+                        MoneyCommand.getBalance(economy, sender, args[1]);
+                    }
+                    else
+                    {
+                        MoneyCommand.getBalance(economy, sender, null);
+                    }
+                }
+            },
+    SET(2, 3)
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    if (args.length == 2)
+                    {
+                        MoneyCommand.setBalance(economy, sender, null, Double.parseDouble(args[1]));
+                    }
+                    else if (args.length == 3)
+                    {
+                        MoneyCommand.setBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    }
+                }
+            },
+    GIVE(3,3)
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    if (args.length == 3)
+                    {
+                        MoneyCommand.giveBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    }
+                }
+            },
+    TAKE(3, 3)
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    if (args.length == 3)
+                    {
+                        MoneyCommand.takeBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    }
+                }
+            },
+    SEND(3, 3)
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    if (args.length == 3)
+                    {
+                        MoneyCommand.sendBalance(economy, sender, args[1], Double.parseDouble(args[2]));
+                    }
+                }
+            },
+    TOP
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
+                    top.entrySet().stream().map(x -> {
+                        Profile profile = economy.getProfileFromUUID(x.getKey());
+                        if (profile != null)
+                        {
+                            return String.format("%s - %f", profile.getName(), x.getValue());
+                        }
+                        else
+                        {
+                            return "";
+                        }
+                    }).filter(x -> !x.isEmpty()).forEach(sender::sendMessage);
+                }
+            },
     HELP
+            {
+                @Override
+                public void execute(SimpleEconomy economy, CommandSender sender, String... args)
+                {
+                    sender.sendMessage(economy.formatPhrase("help"));
+                }
+            };
+
+    final int minArgs; // (minimum) number of arguments subcommand expects
+    final int maxArgs; // (maximum) number of arguments subcommand expects
+
+    /**
+     * Create subcommand
+     *
+     * @param minArgs (minimun) number of arguments subcommand expects
+     * @param maxArgs (maximum) number of arguments subcommand expects
+     */
+    SubCommand(int minArgs, int maxArgs)
+    {
+        this.minArgs = minArgs;
+        this.maxArgs = maxArgs;
+    }
+
+    /**
+     * Default to no required arguments
+     */
+    SubCommand()
+    {
+        this(1, 1);
+    }
+
+    public abstract void execute(SimpleEconomy economy, CommandSender sender, String... args);
 }
