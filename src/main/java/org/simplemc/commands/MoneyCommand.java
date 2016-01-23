@@ -36,7 +36,6 @@ public class MoneyCommand implements CommandExecutor
                 }
                 else
                 {
-                    // TODO improper number of args(each subcommand maybe should have a syntax helper?)
                     commandSender.sendMessage(economy.formatPhrase("error.syntax.base", economy.formatPhrase("error.syntax." + sub.name().toLowerCase())));
                 }
             }
