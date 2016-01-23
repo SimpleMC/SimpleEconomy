@@ -20,6 +20,15 @@ phrases:
       notfound: "[Money]: Sorry we could not find a player by the name of %s."
     subcommand:
       notfound: "[Money]: Sorry, the subcommand you entered is not valid. See /money help"
+    syntax:
+      base: "[Money]: Sorry, that is not the correct syntax for this command! The correct syntax is %s"
+      get: "/money get [username]"
+      set: "/money set <username> <amount>"
+      give: "/money give <username> <amount>"
+      take: "/money take <username> <amount>"
+      send: "/money send <username> <amount>"
+      top: "/money top"
+      help: "/money help"
   help: |
           --- Money ---
           /money get - Gets your current balance
