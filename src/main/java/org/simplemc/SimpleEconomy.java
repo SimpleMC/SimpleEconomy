@@ -150,7 +150,12 @@ public class SimpleEconomy extends JavaPlugin
         return String.format(languageConfig.getString("phrases." + phraseId), objects);
     }
 
-    //TODO: Store result in DB
+    /**
+     * Gets the Minecraft profile from the given name.
+     *
+     * @param name The name of the profile to fetch.
+     * @return The Minecraft profile or null if not found.
+     */
     public Profile getProfileFromName(String name)
     {
         try
@@ -168,6 +173,14 @@ public class SimpleEconomy extends JavaPlugin
         return null;
     }
 
+    /**
+     * Grabs the Profile for a player from a given UUID.
+     * Note: Due to a lack of functionality in the underlying library we cannot fetch the live version,
+     * so we will grab the information from the profile cache.
+     *
+     * @param uuid UUID for the Profile we require.
+     * @return The profile or null if not found.
+     */
     public Profile getProfileFromUUID(UUID uuid)
     {
         return cache.getIfPresent(uuid);

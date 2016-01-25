@@ -260,6 +260,7 @@ enum SubCommand
                 @Override
                 public void execute(SimpleEconomy economy, CommandSender sender, String... args)
                 {
+                    //Grabs the top ten accounts in the server then processes them and displays to the player.
                     HashMap<UUID, Double> top = economy.getDatabaseManager().getTop(10);
                     top.entrySet().stream().map(x -> {
                         Profile profile = economy.getProfileFromUUID(x.getKey());
