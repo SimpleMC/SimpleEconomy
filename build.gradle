@@ -37,6 +37,8 @@ repositories {
     maven {
         url "https://hub.spigotmc.org/nexus/content/groups/public/"
     }
+
+    // Sk89q's Repo - Dependencies: SquirrelID
     maven {
         url "http://maven.sk89q.com/repo/"
     }
